@@ -1,6 +1,8 @@
 import os
 
 from fabric.api import *
+from fabric.operations import _shell_escape
+
 from cuisine import *
 from cuisine import run as _cuisine_run
 
@@ -9,6 +11,7 @@ def make_symlinks(configs_dir='configs'):
     """Makes symlinks from configs directory
     """
     require('environment')
+    require('project_dir')
 
     if os.path.exists(configs_dir):
         environment = '.' + env.environment
@@ -16,14 +19,12 @@ def make_symlinks(configs_dir='configs'):
         for root, dirs, files in os.walk('configs'):
             for filename in files:
                 if filename.endswith(environment):
-                    local_file = os.path.abspath(
-                        os.path.join(root, filename)
-                    )
+                    local_file = os.path.join(env.project_dir, root, filename)
                     symlink = os.path.join(
                         root.lstrip(configs_dir),
                         filename[0:-len(environment)]
                     )
-                    if not os.path.lexists(symlink):
+                    if not file_exists(symlink):
                         sudo('ln -s "{0}" "{1}"'.format(local_file, symlink))
 
 
