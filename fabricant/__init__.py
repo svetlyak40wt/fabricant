@@ -75,7 +75,7 @@ def _run_with_agent(command, shell=True, pty=True, ssh_options='-A'):
     elif fabric.api.output.running:
         print("[%s] run: %s" % (env.host_string, command))
 
-    return fabric.api.local("ssh {options} -p {env.port} {env.host} '{command}'".format(
+    return fabric.api.local("ssh {options} -p {env.port} -l {env.user} {env.host} '{command}'".format(
             env=env,
             command=real_command,
             options=ssh_options,
